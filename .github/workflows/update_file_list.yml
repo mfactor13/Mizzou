@@ -1,0 +1,27 @@
+name: Update File List
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-file-list:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: List all CSV files
+      run: |
+        find . -name '*.csv' > file_list.csv
+        sed -i 's|./|https://github.com/mfactor13/Mizzou/blob/main/|g' file_list.csv
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add file_list.csv
+        git commit -m "Update file list"
+        git push
