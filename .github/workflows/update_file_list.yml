@@ -1,27 +1,26 @@
-name: Update File List
+name: update-file-list
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   update-file-list:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - name: Checkout repository content
+      uses: actions/checkout@v3 # Use the latest v3 version of checkout action
 
-    - name: List all CSV files
+    - name: Generate file list
       run: |
-        find . -name '*.csv' > file_list.csv
-        sed -i 's|./|https://github.com/mfactor13/Mizzou/blob/main/|g' file_list.csv
+        find . -name '*.csv' | grep -v 'file_list.csv' > file_list.csv
 
-    - name: Commit changes
+    - name: Commit and push changes
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --global user.email "themichaelfactor13@gmail.com"
+        git config --global user.name "GitHub Actions"
         git add file_list.csv
         git commit -m "Update file list"
-        git push
+        git push origin main
